@@ -11,7 +11,7 @@ const rowTemplate = '<tr id="row_$ID" class="$DONECLASS"><td>$TASK</td><td><butt
 let currentId = 0;
 let todosSave; // dizionario usato per salvare l'array con le todo e il currentId
 
-const add = (todo) => {
+const addTodo = (todo) => {
     return new Promise((resolve, reject) => {
         fetch(
             "/todo/add",
@@ -28,7 +28,7 @@ const add = (todo) => {
     })
 };
 
-const load = () => {
+const loadTodos = () => {
     return new Promise((resolve, reject) => {
         fetch("/todo")
         .then(response => response.json())
@@ -36,7 +36,7 @@ const load = () => {
     })
 };
 
-const complete = (todo) => {
+const completeTodo = (todo) => {
     return new Promise((resolve, reject) => {
         fetch("/todo/complete", {
             method: 'PUT',
