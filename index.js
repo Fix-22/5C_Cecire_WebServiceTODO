@@ -31,7 +31,7 @@ app.get("/todo", (req, res) => {
   res.json({todos: todos});
 });
 
-app.put("/todo/change", (req, res) => {
+app.put("/todo/change", (req, res) => { // cambia lo stato nel caso si volgia riassegnare l'attività
   const todo = req.body;
 
   try {
