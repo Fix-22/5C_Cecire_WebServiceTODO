@@ -1,0 +1,27 @@
+{
+  "name": "5c_cecire_webservicetodo",
+  "version": "0.1.0",
+  "description": "Realizzazione di un web service TODO list con NodeJS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fix-22/5C_Cecire_WebServiceTODO.git"
+  },
+  "keywords": [
+    "ws"
+  ],
+  "author": "Simone Cecire",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Fix-22/5C_Cecire_WebServiceTODO/issues"
+  },
+  "homepage": "https://github.com/Fix-22/5C_Cecire_WebServiceTODO#readme",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "express": "^4.21.2",
+    "http": "^0.0.1-security"
+  }
+}
