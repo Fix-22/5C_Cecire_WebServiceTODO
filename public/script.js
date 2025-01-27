@@ -2,19 +2,17 @@
     TODO list (front-end) - Cecire
 */
 
-const todo = document.getElementById("todo");
+const todoInput = document.getElementById("todo");
 const addButton = document.getElementById("add");
 const activities = document.getElementById("activities");
 
 const rowTemplate = '<tr id="row_$ID" class="$DONECLASS"><td>$TASK</td><td><button class="button btn btn-primary" type="button" id="done_$ID">$DONETEXT</button></td><td><button class="button btn btn-danger" type="button" id="delete_$ID">Elimina</button></td></tr>';
 
-let currentId = 0;
-let todosSave; // dizionario usato per salvare l'array con le todo e il currentId
+let todos = [];
 
 const addTodo = (todo) => {
     return new Promise((resolve, reject) => {
-        fetch(
-            "/todo/add",
+        fetch("/todo/add",
             {
                 method: "POST",
                 headers: {
@@ -36,9 +34,9 @@ const loadTodos = () => {
     })
 };
 
-const completeTodo = (todo) => {
+const changeTodoState = (todo) => {
     return new Promise((resolve, reject) => {
-        fetch("/todo/complete", {
+        fetch("/todo/change", {
             method: 'PUT',
             headers: {
                 "Content-Type": "application/json"
@@ -83,48 +81,51 @@ const renderTodos = () => { // funzione per fare il render dei todo
     buttons.forEach((button) => {
         if (button.id.includes("done")) { // se l'id del pulsante inizia con "done"
             button.onclick = () => { // aggiunge una funzione handler che setta il parametro "done" dell'attività nell'array coi todo a true, fa di nuovo la render e carica sul server le todo aggiornate
-                const todo = todos.find((e) => e.id === parseInt(button.id.replace("done_", "")));
-                todo.done = !todo.done;
-                todosSave = {
-                    "todos": todos,
-                    "currentId": currentId
-                };
-                renderTodos();
-                add();
+                const todo = todos.find((e) => e.id === button.id.replace("done_", ""));
+                changeTodoState(todo).then(() => loadTodos()).then(data => {
+                    todos = data.todos;
+                    renderTodos();
+                });
             }
         }
         else if (button.id.includes("delete")) { // se l'id del pulsante inizia con "delete"
             button.onclick = () => { // aggiunge una funzione handler che rimuove l'attività dall'array coi todo, fa di nuovo la render e carica sul server le todo aggiornate
-                const idx = todos.indexOf(todos.find((e) => e.id === parseInt(button.id.replace("delete_", ""))));
-                todos.splice(idx, 1);
-                todosSave = {
-                    "todos": todos,
-                    "currentId": currentId
-                };
-                renderTodos();
-                saveTodos();
+                deleteTodo(button.id.replace("delete_", "")).then(() => loadTodos()).then(data => {
+                    todos = data.todos;
+                    renderTodos();
+                });
             }
         }
     });
 };
 
 addButton.onclick = () => {
-    if (todo.value) {
-        todos.unshift({ // aggiunge l'elemento in testa all'array delle attività
-            id: currentId++, // setta l'id corrente e poi aumenta
-            task: todo.value,
+    if (todoInput.value) {
+        const todo = {
+            task: todoInput.value,
             done: false
-        });
-
-        todosSave = {
-            "todos": todos,
-            "currentId": currentId
         };
 
-        todo.value = "";
-        renderTodos();
-        saveTodos();
+        addTodo(todo)
+        .then(() => loadTodos())
+        .then(data => {
+            todos = data.todos;
+            todoInput.value = "";
+            renderTodos();
+        });
     }
 };
 
-getTodos();
+loadTodos()
+.then(data => {
+    todos = data.todos;
+    renderTodos();
+});
+
+setInterval(() => {
+    loadTodos()
+    .then(data => {
+        todos = data.todos;
+        renderTodos();
+    });
+}, 30000);

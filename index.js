@@ -9,7 +9,7 @@ const path = require('path');
 
 const app = express();
 
-const todos = [];
+let todos = [];
 
 app.use(bodyParser.json());
 
@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({
 app.use("/", express.static(path.join(__dirname, "public")));
 
 app.post("/todo/add", (req, res) => {
-  const todo = req.body.todo;
+  const todo = req.body;
   todo.id = "" + new Date().getTime();
   todos.push(todo);
 
@@ -31,15 +31,14 @@ app.get("/todo", (req, res) => {
   res.json({todos: todos});
 });
 
-app.put("/todo/complete", (req, res) => {
+app.put("/todo/change", (req, res) => {
   const todo = req.body;
 
   try {
-    todos = todos.map((element) => {
+    todos.forEach((element) => {
       if (element.id === todo.id) {
-        element.completed = true;
+        element.done = !element.done;
       }
-      return element;
     });
   }
   catch (e) {
@@ -57,4 +56,4 @@ app.delete("/todo/:id", (req, res) => {
 
 const server = http.createServer(app);
 
-server.listen(80, () => console.log("Server running"));
+server.listen(80, () => console.log("Server running..."));
