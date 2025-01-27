@@ -17,6 +17,10 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
+app.use(
+  express.static(path.join(__dirname, "node_modules/bootstrap/dist/"))
+);
+
 app.use("/", express.static(path.join(__dirname, "public")));
 
 app.post("/todo/add", (req, res) => {
